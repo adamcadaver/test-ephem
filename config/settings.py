@@ -10,30 +10,22 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-import os
 from pathlib import Path
-
-from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get(
-    'DJANGO_SECRET_KEY',
-    'django-insecure-2d^q46#v0z4l-iwl4f2ypadz3ehmmp(s7ku@-n0o&3_!fq+fi)',
-)
+SECRET_KEY = 'django-insecure-2d^q46#v0z4l-iwl4f2ypadz3ehmmp(s7ku@-n0o&3_!fq+fi)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'true').lower() == 'true'
+DEBUG = True
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -85,11 +77,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'app'),
-        'USER': os.environ.get('POSTGRES_USER', 'app'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'app'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'db'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+        'NAME': 'app',
+        'USER': 'app',
+        'PASSWORD': 'app',
+        'HOST': 'db',
+        'PORT': '5432',
     }
 }
 
@@ -98,7 +90,7 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.1/topics/cache/
 # https://github.com/jazzband/django-redis
 
-REDIS_URL = os.environ.get('REDIS_URL', 'redis://redis:6379/0')
+REDIS_URL = 'redis://redis:6379/0'
 
 CACHES = {
     'default': {

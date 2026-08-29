@@ -5,19 +5,21 @@ containers via Docker Compose. The app is a tiny notes list: notes are
 stored in Postgres, and a page-view counter plus a cached note count are
 stored in Redis (via `django-redis`) to demonstrate the cache wiring.
 
+Config (DB credentials, Redis URL, etc.) is hardcoded in
+`config/settings.py` — there's no `.env` file to manage.
+
 ## Running with Docker Compose
 
 ```
-cp .env.example .env   # first time only
 docker compose up -d --build
 ```
 
-Then visit http://localhost:8000/ (or whatever `WEB_HOST_PORT` you set in
-`.env`).
+Then visit http://localhost:8000/.
 
-If ports 5432, 6379, or 8000 are already in use on your machine, override
-`POSTGRES_HOST_PORT`, `REDIS_HOST_PORT`, or `WEB_HOST_PORT` in `.env` — these
-only affect the host-side port mapping, not the app's internal connections.
+The host-side ports are remapped in `docker-compose.yml` (Postgres on
+5431, Redis on 6378) to avoid clashing with other local services — the
+containers still listen internally on their standard ports (5432/6379),
+which is what `settings.py` and the `web` service actually talk to.
 
 Migrations run automatically on container start (see
 `docker-entrypoint.sh`). To create a Django superuser:
@@ -40,7 +42,9 @@ pipenv run python manage.py migrate
 pipenv run python manage.py runserver
 ```
 
-For this to work outside of Compose, point `POSTGRES_HOST` in `.env` at a
-Postgres instance reachable from your machine (e.g. `localhost`), and
-`REDIS_URL` at a reachable Redis instance — Compose's internal service
-names (`db`, `redis`) only resolve inside the Compose network.
+For this to work outside of Compose, edit the `HOST`/`PORT` in
+`settings.py`'s `DATABASES` and the `REDIS_URL` to point at wherever
+Postgres/Redis are actually reachable from your machine (e.g.
+`localhost:5431` and `localhost:6378` if using the containers above) —
+Compose's internal service names (`db`, `redis`) only resolve inside the
+Compose network.
