@@ -105,6 +105,11 @@ CACHES = {
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
 
+# The app is served over HTTPS only (gunicorn terminates TLS directly,
+# see docker-entrypoint.sh) so cookies never need to go out over plain HTTP.
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

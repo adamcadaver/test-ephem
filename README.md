@@ -14,7 +14,14 @@ Config (DB credentials, Redis URL, etc.) is hardcoded in
 docker compose up -d --build
 ```
 
-Then visit http://localhost:8000/.
+Then visit https://localhost:8000/.
+
+The app is served over HTTPS only — gunicorn terminates TLS directly using
+a self-signed certificate that `docker-entrypoint.sh` generates on first
+start (and persists in the `certs_data` volume across restarts). Browsers
+will show a certificate warning since it's self-signed; for `curl`, pass
+`-k`. Plain `http://` requests will fail outright, since nothing is
+listening for unencrypted HTTP.
 
 The host-side ports are remapped in `docker-compose.yml` (Postgres on
 5431, Redis on 6378) to avoid clashing with other local services — the
@@ -41,6 +48,9 @@ pipenv install
 pipenv run python manage.py migrate
 pipenv run python manage.py runserver
 ```
+
+`runserver` serves plain HTTP, unlike the Compose setup above — fine for
+local iteration, just not a match for the HTTPS-only container setup.
 
 For this to work outside of Compose, edit the `HOST`/`PORT` in
 `settings.py`'s `DATABASES` and the `REDIS_URL` to point at wherever

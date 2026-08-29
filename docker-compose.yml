@@ -41,7 +41,9 @@ services:
         condition: service_healthy
     volumes:
       - .:/app
+      - certs_data:/certs
 
 volumes:
   postgres_data:
   redis_data:
+  certs_data:
