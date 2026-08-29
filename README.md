@@ -14,7 +14,9 @@ Config (DB credentials, Redis URL, etc.) is hardcoded in
 docker compose up -d --build
 ```
 
-Then visit https://localhost:8000/.
+Then visit https://localhost/ (standard HTTPS port 443, mapped in
+`docker-compose.yml`; gunicorn itself still listens on 8000 inside the
+container).
 
 The app is served over HTTPS only — gunicorn terminates TLS directly.
 Plain `http://` requests will fail outright, since nothing is listening
