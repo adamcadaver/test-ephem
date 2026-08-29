@@ -42,6 +42,7 @@ services:
     volumes:
       - .:/app
       - certs_data:/certs
+      - ./dev-certs:/host-certs:ro
 
 volumes:
   postgres_data:

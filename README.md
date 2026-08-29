@@ -16,12 +16,34 @@ docker compose up -d --build
 
 Then visit https://localhost:8000/.
 
-The app is served over HTTPS only — gunicorn terminates TLS directly using
-a self-signed certificate that `docker-entrypoint.sh` generates on first
-start (and persists in the `certs_data` volume across restarts). Browsers
-will show a certificate warning since it's self-signed; for `curl`, pass
-`-k`. Plain `http://` requests will fail outright, since nothing is
-listening for unencrypted HTTP.
+The app is served over HTTPS only — gunicorn terminates TLS directly.
+Plain `http://` requests will fail outright, since nothing is listening
+for unencrypted HTTP.
+
+### Trusted local HTTPS cert (mkcert)
+
+By default (no setup needed) `docker-entrypoint.sh` generates a
+self-signed certificate on first start, persisted in the `certs_data`
+volume. Browsers will show a "connection is not private" warning for it,
+since it isn't signed by a CA they recognize — click through
+(Advanced → Proceed) to continue.
+
+To get a cert your browser trusts with no warning, use
+[mkcert](https://github.com/FiloSottile/mkcert) to generate one signed by
+a local CA:
+
+```
+brew install mkcert
+mkcert -install                          # one-time, installs a local CA into your system/browser trust store
+mkdir -p dev-certs
+mkcert -cert-file dev-certs/cert.pem -key-file dev-certs/key.pem localhost 127.0.0.1 ::1
+docker compose up -d --build             # rebuild so the container picks up dev-certs/
+```
+
+`dev-certs/` is bind-mounted read-only into the container and, when
+present, takes priority over the self-signed fallback (see
+`docker-entrypoint.sh`). It's gitignored — each developer generates their
+own.
 
 The host-side ports are remapped in `docker-compose.yml` (Postgres on
 5431, Redis on 6378) to avoid clashing with other local services — the
